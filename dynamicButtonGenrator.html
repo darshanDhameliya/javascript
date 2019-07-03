@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <h1>Dynamic Button Genrator</h1>
+
+</head>
+
+<body>
+    <center>
+    <input type="range" id="number" oninput="genrateButton(this.value)" />
+
+    <div id="buttons"></div>
+    </center>
+    <script>
+        function genrateButton(number) {
+            var divTag = document.getElementById("buttons");
+
+            while (divTag.hasChildNodes()) {
+
+                divTag.removeChild(divTag.lastChild);
+            }
+            for (var index = 0; index < number; index++) {
+                var buttonTag = document.createElement("BUTTON");
+                var buttonText = document.createTextNode(index + 1);
+                buttonTag.appendChild(buttonText);
+                buttonTag.setAttribute("id", index + 1);
+                buttonTag.onclick=displayAlert;
+                divTag.appendChild(buttonTag);
+            }
+        }    
+        function displayAlert(event)
+        {
+            alert(event.target.id);
+        }
+    </script>
+</body>
+
+</html>

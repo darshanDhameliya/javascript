@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var obj = {};
+        obj.firstname = 'abc';
+        obj.lastname = 'pqr';
+        console.log(obj.firstname);
+        console.log(obj['firstname']);
+
+        var obj2 = {
+            id: 101,
+            name: 'xyz'
+        };
+        console.log(obj2);
+
+        var students = [{
+            id: 1,
+            name: 'darshan'
+        }, {
+            id: 2,
+            name: 'vivek'
+        }, {
+            id: 3,
+            name: 'hiren'
+        }];
+        console.log(students);
+        for (const iterator of students) {
+            console.log(iterator);
+        }
+
+
+        for (const key in students) {
+            if (students.hasOwnProperty(key)) {
+                const element = students[key];
+                console.log(element);
+            }
+        }
+    </script>
+</body>
+
+</html>

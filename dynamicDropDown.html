@@ -1,0 +1,27 @@
+<html>
+
+<head>
+    <h1>Dynamic Drop Down</h1>
+
+</head>
+
+<body onload="setColor()">
+    <select id="color">
+    </select>
+    <script>
+        function setColor() {
+            var selectTag = document.getElementById("color");
+            var colorList = ["red", "blue", "green", "yellow"];
+
+            for (var index = 0; index < colorList.length; index++) {
+                var color = colorList[index];
+                var optionTag = document.createElement("option");
+                optionTag.textContent = color;
+                optionTag.value = color;
+                selectTag.appendChild(optionTag);
+            }
+        }    
+    </script>
+</body>
+
+</html>

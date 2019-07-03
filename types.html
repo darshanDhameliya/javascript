@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var foo;
+        if (foo) {
+            console.log("foo has value");
+        } else {
+            console.log("no value for foo");
+        }
+        console.log("not set value = " + typeof foo);
+
+        foo = 'hello';
+        if (foo) {
+            console.log("foo has value");
+        } else {
+            console.log("no value for foo");
+        }
+        console.log("set hello = " + typeof foo);
+
+        foo = 20;
+        console.log("set 20 = " + typeof foo);
+
+        foo = true;
+        console.log("set true = " + typeof foo);
+
+
+        foo = function() {
+            console.log("in function");
+        };
+        console.log("set fuction = " + typeof foo);
+
+        foo = {};
+        console.log("set object = " + typeof foo);
+
+        console.log(2 == '2');
+        console.log(2 === '2');
+        console.log(20 + '20');
+        console.log(20 * '20');
+        console.log('20' + 20);
+    </script>
+</body>
+
+</html>

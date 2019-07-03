@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <style>
+        .ball {
+            background-color: gray;
+            /* Green */
+            border: none;
+            color: black;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 50%;
+            height: 70px;
+            width: 70px;
+        }
+        
+        #balls {
+            padding-right: 340px;
+            padding-left: 340px;
+        }
+    </style>
+
+</head>
+
+<body onload="showInstructions()">
+    <div id="rulesMenu">
+        <ul id="rulesList">
+            <li>You will get only <span id="chances"></span> chances</li>
+            <li>If you guess lower number than expected the balls will turn green</li>
+            <li>If you guess Higher number than expected the balls will turn run</li>
+        </ul>
+        <button id="startGame" onclick="startGame()"> start game</button>
+
+    </div>
+    <div id="balls">
+
+    </div>
+    <script>
+        var answer;
+        var chances;
+        var gameStatus;
+        var gameInformation;
+        var playerChancesDisplay = document.getElementById("chances");
+        var rulesMenu = document.getElementById("rulesMenu");
+        var balls = document.getElementById("balls");
+        var rulesList = document.getElementById("rulesList");
+        var TOTAL_BALLS = 50;
+        var BALL_START_NUMBER = 1;
+        var TOTAL_CHOICE = 3;
+        var red = "#f22440";
+        var green = "#34a84f";
+        var blue = "#2e86d9";
+
+        function showInstructions() {
+            removeAllElementsOfId(balls);
+            playerChancesDisplay.innerHTML = TOTAL_CHOICE;
+            rulesMenu.style.visibility = 'visible';
+            balls.style.visibility = 'hidden';
+        }
+
+        function startGame() {
+            answer = Math.floor(Math.random() * TOTAL_BALLS) + 1;
+            chances = TOTAL_CHOICE;
+            gameStatus = "IN_PROGRESS";
+            rulesMenu.style.visibility = 'hidden';
+            balls.style.visibility = 'visible';
+            loadBalls()
+        }
+
+        function loadBalls() {
+            createElement("p", "gameInformation", "Chances taken " + chances, balls);
+            gameInformation = document.getElementById("gameInformation");
+            for (let index = BALL_START_NUMBER; index <= TOTAL_BALLS; index++) {
+                var button = document.createElement("button");
+                button.innerHTML = index;
+                button.id = index;
+                button.className = "ball";
+                balls.appendChild(button);
+            }
+        }
+        document.addEventListener('click', processPlayerInput);
+
+        function processPlayerInput(event) {
+            playerSelectedNumber = event.target.id;
+            if (playerSelectedNumber >= BALL_START_NUMBER && playerSelectedNumber <= TOTAL_BALLS) {
+                chances--;
+
+                checkValue(playerSelectedNumber);
+            }
+        }
+
+        function checkValue(playerSelectedNumber) {
+            gameInformation.innerHTML = "Chances taken " + chances;
+            if (playerSelectedNumber == answer) {
+                gameStatus = "WIN";
+                setOneBallColor(playerSelectedNumber, blue);
+                displayWin();
+            }
+            if (chances == 0 && gameStatus == "IN_PROGRESS") {
+                setOneBallColor(answer, blue);
+                displayGameOver();
+            }
+            if (playerSelectedNumber < answer) {
+                setBallsColor(1, playerSelectedNumber, green);
+            }
+            if (playerSelectedNumber > answer) {
+                setBallsColor(playerSelectedNumber, TOTAL_BALLS, red);
+            }
+        }
+
+        function displayGameOver() {
+            gameInformation.innerHTML = "Game Over";
+            setTimeout(showInstructions, 3000);
+        }
+
+        function displayWin() {
+            gameInformation.innerHTML = "You Won";
+            setTimeout(showInstructions, 3000);
+        }
+
+        function removeAllElementsOfId(id) {
+            while (id.hasChildNodes()) {
+                id.removeChild(id.lastChild);
+            }
+        }
+
+        function setOneBallColor(initial, color) {
+            document.getElementById(initial).style.background = color;
+        }
+
+        function setBallsColor(startBallIdex, endBallIndex, color) {
+            for (var index = startBallIdex; index <= endBallIndex; index++) {
+
+                setOneBallColor(index, color);
+            }
+        }
+
+        function createElement(tag, id, text, parent) {
+            var child = document.createElement(tag);
+            child.id = id;
+            child.innerHTML = text;
+            parent.appendChild(child);
+        }
+    </script>
+</body>
+
+</html>

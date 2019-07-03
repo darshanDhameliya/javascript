@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>QuestionAnswer Bank</title>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            background-color: white;
+            color: black;
+            border: 2px solid #4CAF50;
+        }
+    </style>
+</head>
+
+<body onload="startPage()">
+    <center>
+        <div id="startPage"></div>
+        <div id="questionDisplayArea">
+            <div id="questionContainer">
+                <p id="questionText"></p>
+                <p id="options"></p>
+            </div>
+            <div id="nextButtonContainer">
+                <button id="previousButton" onclick="previousQuestion()" class="button">Previous</button><button id="nextButton" onclick="nextQuestion()" class="button">Next</button>
+            </div>
+        </div>
+    </center>
+    <script>
+        var startButton;
+        var startPageDivTag = document.getElementById("startPage");
+        var qustionsPTag = document.getElementById("options");
+        var questionDisplayAreaDivTag = document.getElementById("questionDisplayArea");
+        var TOTAL_QUESTIONS = 5;
+        var selectOptionValueList = [null, null, null, null, null];
+        var selectOptionValue;
+
+        var questionIndex = 0;
+
+        var questions = [{
+            id: 1,
+            text: "Tony Stark is saved from dying in outer space only with the help of who of these?",
+            option: ['Thor', 'Nick Fury', 'The Guardians of the Galaxy', 'Carol Danvers'],
+            answer: 3
+        }, {
+            id: 2,
+            text: "Who does Heimdall manage to send to Earth during Thanos' attack?",
+            option: ['Loki', 'Thor', 'Hulk', 'Iron Man'],
+            answer: 2
+        }, {
+            id: 3,
+            text: "Who was the first major character to die?",
+            option: ['Black Widow', 'Iron Man', 'Gamora', 'Heimdall '],
+            answer: 3
+        }, {
+            id: 4,
+            text: " Which of the following Avengers from the comics is not in the movie?",
+            option: ['The Wasp', 'Hawkeye', 'Captain America', 'Black Widow'],
+            answer: 0
+        }, {
+            id: 5,
+            text: " Where does Natasha Romanoff locate Dr. Bruce Banner?",
+            option: ['India', 'Japan', 'America', 'Landon'],
+            answer: 0
+        }];
+
+        function startPage() {
+
+            startPageDivTag.style.visibility = "visible";
+            questionDisplayAreaDivTag.style.visibility = "hidden";
+            startButton = document.createElement("button");
+            startButton.id = "start";
+            startButton.innerHTML = "start";
+            startButton.className = "button";
+            startButton.onclick = displayQuestion;
+            startPageDivTag.appendChild(startButton);
+        }
+
+
+        function nextQuestion() {
+            if (questionIndex < TOTAL_QUESTIONS - 1) {
+                questionIndex++;
+            }
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (questionIndex > 0) {
+                questionIndex--;
+            }
+            displayQuestion();
+        }
+
+        function displayQuestion() {
+
+            startPageDivTag.style.visibility = "hidden";
+            questionDisplayAreaDivTag.style.visibility = "visible";
+
+            var text = questions[questionIndex].text;
+            var questionText = document.getElementById("questionText").innerHTML = "Q " + questions[questionIndex].id + ")&nbsp&nbsp&nbsp&nbsp&nbsp" + text;
+
+            qustionsPTag.innerHTML = null;
+            for (var index = 0; index < questions[questionIndex].option.length; index++) {
+                var radioBtn = document.createElement("input");
+                radioBtn.setAttribute("type", "radio");
+                radioBtn.setAttribute("id", "" + index);
+                radioBtn.setAttribute("name", "option");
+                radioBtn.setAttribute("value", "" + questions[questionIndex].option[index]);
+                radioBtn.onclick = selectedRdButtonValue;
+
+
+                var radioLbl = document.createElement("lable");
+                var textOnLable = document.createTextNode("" + questions[questionIndex].option[index]);
+                radioLbl.appendChild(textOnLable);
+
+
+                var space = document.createElement("span");
+                space.setAttribute("innerHTML", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                qustionsPTag.appendChild(radioBtn);
+                qustionsPTag.appendChild(radioLbl);
+                qustionsPTag.appendChild(space);
+            }
+
+            console.log(selectOptionValueList);
+        }
+
+        function selectedRdButtonValue(event) {
+            selectOptionValue = event.target.id;
+            selectOptionValueList[questionIndex] = selectOptionValue;
+        }
+    </script>
+</body>
+
+</html>

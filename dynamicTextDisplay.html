@@ -1,0 +1,23 @@
+<html>
+
+<head>
+    <h1>Dynamic Text Display</h1>
+
+</head>
+
+<body>
+    <input type="text" id="text" oninput="setText(this.value)" />
+    <input type="text" id="fontSize" oninput="setSize(this.value)" />
+
+    <p id="printText"></p>
+    </select>
+    <script>
+        function setText(text) {
+            document.getElementById("printText").innerHTML = text;
+        } function setSize(size) {
+            document.getElementById("printText").style.fontSize = size;
+        }    
+    </script>
+</body>
+
+</html>
