@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Closures Demo</title>
+</head>
+
+<body>
+    <script>
+        var add = (function() {
+            var counter = 0;
+            return function() {
+                counter += 1;
+                return counter;
+            }
+        })();
+        console.log(add());
+        console.log(add());
+        console.log(add());
+    </script>
+</body>
+
+</html>

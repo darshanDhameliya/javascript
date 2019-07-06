@@ -1,0 +1,143 @@
+<html lang="en">
+
+<head>
+    <title>Comments</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+    p {
+        display: inline;
+    }
+</style>
+
+<body onload="displayCommentList()">
+    <center>
+        <div id="CommentInputFrame">
+            comment : <input id="commentField" type="text"><br> date : <input id="commentDate" type="date"><br>
+            <select id="commentType">
+               <option value="normalComment">Normal Comment</option>
+                <option value="impotentComment">Impotent Comment</option>
+              </select><br><br>
+            <button id="addCommnetButton" type="button" onclick="addComment()">add Comment</button>
+            <button id="clearCommnetButton" type="button" onclick="clearComment()">clear Comment</button>
+
+        </div> <br>
+        <div id="notifyEmpty" style="color: red"></div>
+        <div id="commentList"></div>
+    </center>
+    <script src="moment.js"></script>
+    <script>
+        'use strict';
+        var commentField = document.getElementById("commentField");
+        var commentDate = document.getElementById("commentDate");
+        var notifyEmpty = document.getElementById("notifyEmpty");
+        var commentList = document.getElementById("commentList");
+        var commentType = document.getElementById("commentType");
+        var commentListObject = JSON.parse(localStorage.getItem('swabhav.comments'));
+        var commentText;
+        var childObject = {};
+
+        function isEmptyComment() {
+            commentText = commentField.value;
+            if (!commentText.replace(/\s/g, '').length || commentText == "" || commentText == null)
+                return true;
+            return false;
+        }
+
+        function notifyEmptyComment() {
+            removeAllElementsOfId(notifyEmpty);
+            createElement("p", "emptyComment", "Enter Comment", notifyEmpty);
+        }
+
+        function addComment() {
+            if (!isEmptyComment()) {
+                removeAllElementsOfId(notifyEmpty);
+                storeComment();
+                displayCommentList();
+            }
+            if (isEmptyComment())
+                notifyEmptyComment();
+        }
+
+        function clearComment() {
+            localStorage.removeItem('swabhav.comments');
+            commentListObject = {
+                'lastIndex': '0'
+            };
+            removeAllElementsOfId(commentList);
+        }
+
+        function displayCommentList() {
+            removeAllElementsOfId(commentList);
+            if (commentListObject == null) {
+                commentListObject = {
+                    'lastIndex': '0'
+                };
+            }
+            for (var index = commentListObject['lastIndex']; index >= 0; index--) {
+                if (commentListObject[index] == null)
+                    continue;
+                createElement("p", index, commentListObject[index].text + "   " + moment(commentListObject[index].date, "YYYY-MM-DD").fromNow(), commentList);
+                if (commentListObject[index].type == "impotentComment")
+                    document.getElementById(index).style = "background-color: yellow";
+                createElementButton(index, "X", removeItem, commentList);
+                createElementBr(commentList);
+            }
+        }
+
+        function storeComment() {
+            increaseIndex();
+            childObject = {};
+            childObject['text'] = commentText;
+            childObject['type'] = commentType.value;
+            childObject['date'] = commentDate.value;
+            commentListObject[commentListObject['lastIndex']] = childObject;
+            localStorage.setItem('swabhav.comments', JSON.stringify(commentListObject));
+        }
+
+        function increaseIndex() {
+            if (commentListObject == null) {
+                commentListObject = {
+                    'lastIndex': '0'
+                };
+            } else
+                commentListObject['lastIndex']++;
+        }
+
+        function removeItem(event) {
+            delete commentListObject[event.target.id];
+            localStorage.setItem('swabhav.comments', JSON.stringify(commentListObject));
+
+            displayCommentList();
+        }
+
+        function createElement(tag, id, text, parent) {
+            var child = document.createElement(tag);
+            child.id = id;
+            child.innerHTML = text;
+            parent.appendChild(child);
+        }
+
+        function createElementButton(id, text, functionName, parent) {
+            var child = document.createElement("button");
+            child.id = id;
+            child.innerHTML = text;
+            child.onclick = functionName;
+            parent.appendChild(child);
+        }
+
+        function createElementBr(parent) {
+            var child = document.createElement("br");
+            parent.appendChild(child);
+        }
+
+        function removeAllElementsOfId(id) {
+            while (id.hasChildNodes()) {
+                id.removeChild(id.lastChild);
+            }
+        }
+    </script>
+</body>
+
+</html>

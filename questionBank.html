@@ -23,6 +23,18 @@
             color: black;
             border: 2px solid #4CAF50;
         }
+        
+        #previousButton {
+            visibility: hidden;
+        }
+        
+        #nextButton {
+            visibility: hidden;
+        }
+        
+        #finishButton {
+            visibility: hidden;
+        }
     </style>
 </head>
 
@@ -30,25 +42,46 @@
     <center>
         <div id="startPage"></div>
         <div id="questionDisplayArea">
+            <div id="questionNumber"></div>
             <div id="questionContainer">
                 <p id="questionText"></p>
                 <p id="options"></p>
             </div>
-            <div id="nextButtonContainer">
+            <div id="buttonContainer">
                 <button id="previousButton" onclick="previousQuestion()" class="button">Previous</button><button id="nextButton" onclick="nextQuestion()" class="button">Next</button>
+                <button id="finishButton" onclick="displayGameResult()" class="button">Finish</button>
             </div>
         </div>
+        <div id="gameResult" style="width: 900px; height: 500px;"></div>
     </center>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script>
-        var startButton;
+        google.charts.load("current", {
+            packages: ["corechart"]
+        });
+
         var startPageDivTag = document.getElementById("startPage");
-        var qustionsPTag = document.getElementById("options");
+        var questionNumberDivTag = document.getElementById("questionNumber");
         var questionDisplayAreaDivTag = document.getElementById("questionDisplayArea");
+        var buttonContainerDivTag = document.getElementById("buttonContainer");
+        var gameResultDivTag = document.getElementById("gameResult");
+
+        var nextButtonTag = document.getElementById("nextButton");
+        var previousButtonTag = document.getElementById("previousButton");
+        var finishButtonTag = document.getElementById("finishButton");
+
+        var qustionsPTag = document.getElementById("options");
+
+        var startButton;
         var TOTAL_QUESTIONS = 5;
         var selectOptionValueList = [null, null, null, null, null];
+        var answerList = [];
         var selectOptionValue;
-
         var questionIndex = 0;
+
+        var rightAnswer = 0;
+        var wrongAnswer = 0;
+        var notSelected = 0;
 
         var questions = [{
             id: 1,
@@ -78,9 +111,11 @@
         }];
 
         function startPage() {
-
-            startPageDivTag.style.visibility = "visible";
             questionDisplayAreaDivTag.style.visibility = "hidden";
+            gameResultDivTag.style.visibility = "hidden";
+            startPageDivTag.style.visibility = "visible";
+            previousButtonTag.style.visibility = "hidden";
+            finishButtonTag.style.visibility = "hidden";
             startButton = document.createElement("button");
             startButton.id = "start";
             startButton.innerHTML = "start";
@@ -89,22 +124,34 @@
             startPageDivTag.appendChild(startButton);
         }
 
-
         function nextQuestion() {
-            if (questionIndex < TOTAL_QUESTIONS - 1) {
-                questionIndex++;
+            questionIndex++;
+            if (questionIndex == TOTAL_QUESTIONS - 1) {
+                nextButtonTag.style.visibility = "hidden";
+                finishButtonTag.style.visibility = "visible";
             }
+            if (questionIndex > 0)
+                previousButtonTag.style.visibility = "visible";
             displayQuestion();
         }
 
         function previousQuestion() {
-            if (questionIndex > 0) {
-                questionIndex--;
+            questionIndex--;
+            if (questionIndex == 0) {
+                previousButtonTag.style.visibility = "hidden";
+            }
+            if (questionIndex < TOTAL_QUESTIONS - 1) {
+                nextButtonTag.style.visibility = "visible";
+                finishButtonTag.style.visibility = "hidden";
             }
             displayQuestion();
         }
 
         function displayQuestion() {
+            if (questionIndex == 0)
+                nextButtonTag.style.visibility = "visible";
+
+            questionNumberDivTag.innerHTML = questions[questionIndex].id + "/" + TOTAL_QUESTIONS;
 
             startPageDivTag.style.visibility = "hidden";
             questionDisplayAreaDivTag.style.visibility = "visible";
@@ -114,18 +161,17 @@
 
             qustionsPTag.innerHTML = null;
             for (var index = 0; index < questions[questionIndex].option.length; index++) {
+
                 var radioBtn = document.createElement("input");
                 radioBtn.setAttribute("type", "radio");
                 radioBtn.setAttribute("id", "" + index);
                 radioBtn.setAttribute("name", "option");
                 radioBtn.setAttribute("value", "" + questions[questionIndex].option[index]);
-                radioBtn.onclick = selectedRdButtonValue;
-
+                radioBtn.onclick = selectedOpionValue;
 
                 var radioLbl = document.createElement("lable");
                 var textOnLable = document.createTextNode("" + questions[questionIndex].option[index]);
                 radioLbl.appendChild(textOnLable);
-
 
                 var space = document.createElement("span");
                 space.setAttribute("innerHTML", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
@@ -133,15 +179,52 @@
                 qustionsPTag.appendChild(radioBtn);
                 qustionsPTag.appendChild(radioLbl);
                 qustionsPTag.appendChild(space);
-            }
 
-            console.log(selectOptionValueList);
-            console.log("made some change");
+                if (selectOptionValueList[questionIndex] == index)
+                    radioBtn.checked = true;
+            }
+            answerList[questionIndex] = questions[questionIndex].answer;
         }
 
-        function selectedRdButtonValue(event) {
+        function selectedOpionValue(event) {
             selectOptionValue = event.target.id;
             selectOptionValueList[questionIndex] = selectOptionValue;
+        }
+
+        function displayGameResult() {
+            removeAllElementsOfId(questionDisplayAreaDivTag);
+            removeAllElementsOfId(buttonContainerDivTag);
+            gameResultDivTag.style.visibility = "visible";
+
+            for (var index = 0; index < TOTAL_QUESTIONS; index++) {
+                if (selectOptionValueList[index] == null)
+                    notSelected++;
+                if (answerList[index] == selectOptionValueList[index])
+                    rightAnswer++;
+            }
+            wrongAnswer = TOTAL_QUESTIONS - rightAnswer - notSelected;
+            google.charts.setOnLoadCallback(drawChart(rightAnswer, wrongAnswer, notSelected));
+        }
+
+        function removeAllElementsOfId(id) {
+            while (id.hasChildNodes())
+                id.removeChild(id.lastChild);
+        }
+
+        function drawChart(rightAnswer, wrongAnswer, notSelected) {
+            var data = google.visualization.arrayToDataTable([
+                ['Task', 'Game Result'],
+                ['Right Answer', rightAnswer],
+                ['Wrong Answer', wrongAnswer],
+                ['Not Selected', notSelected],
+            ]);
+            var options = {
+                title: 'Game Result',
+                pieHole: 0.4,
+            };
+            var chart =
+                new google.visualization.PieChart(document.getElementById('gameResult'));
+            chart.draw(data, options);
         }
     </script>
 </body>

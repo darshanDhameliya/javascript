@@ -10,6 +10,16 @@
 
 <body>
     <script>
+        console.log(this);
+        console.log(window);
+        console.log(this == window);
+        console.log(this === window);
+        console.log(typeof this);
+        console.log(typeof window);
+        console.log(window.location);
+        console.log(window.document);
+        console.log(window.console);
+
         var foo;
         if (foo) {
             console.log("foo has value");
@@ -46,6 +56,9 @@
         console.log(20 + '20');
         console.log(20 * '20');
         console.log('20' + 20);
+
+        console.log(window);
+        console.log(window.foo);
     </script>
 </body>
 

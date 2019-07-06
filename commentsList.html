@@ -1,0 +1,112 @@
+<html lang="en">
+
+<head>
+    <title>Comments</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<style>
+    p {
+        display: inline;
+    }
+</style>
+
+<body onload="displayCommentList()">
+    <center>
+        <div id="CommentInputFrame">
+            <input id="commentField" type="text">
+            <button id="addCommnetButton" type="button" onclick="addComment()">add Comment</button>
+            <button id="clearCommnetButton" type="button" onclick="clearComment()">clear Comment</button>
+        </div>
+        <div id="notifyEmpty"></div>
+        <div id="commentList"></div>
+    </center>
+    <script>
+        'use strict';
+        var commentField = document.getElementById("commentField");
+        var notifyEmpty = document.getElementById("notifyEmpty");
+        var commentList = document.getElementById("commentList");
+        var commentText;
+        var commentNumber = localStorage.length;
+        console.log(window.localStorage);
+
+        function isEmptyComment() {
+            commentText = commentField.value;
+            if (!commentText.replace(/\s/g, '').length || commentText == "" || commentText == null)
+                return true;
+            return false;
+        }
+
+        function notifyEmptyComment() {
+            removeAllElementsOfId(notifyEmpty);
+            createElement("p", "emptyComment", "Enter Comment", notifyEmpty);
+        }
+
+        function addComment() {
+            if (!isEmptyComment()) {
+                removeAllElementsOfId(notifyEmpty);
+                storeComment();
+                displayCommentList();
+            }
+            if (isEmptyComment())
+                notifyEmptyComment();
+        }
+
+        function clearComment() {
+            localStorage.clear();
+            displayCommentList();
+        }
+
+        function displayCommentList() {
+            removeAllElementsOfId(commentList);
+            for (var index = localStorage.getItem('lastKey'); index >= 0; index--) {
+                if (localStorage.getItem(index) == null) {
+                    continue;
+                }
+                console.log(localStorage.getItem(index));
+                createElement("p", index, localStorage.getItem(index), commentList);
+                createElementButton(index, "X", removeItem, commentList);
+                createElementBr(commentList);
+            }
+        }
+
+        function storeComment() {
+            localStorage.setItem('lastKey', commentNumber);
+            localStorage.setItem(commentNumber, commentText);
+            commentNumber++;
+        }
+
+        function removeItem(event) {
+            localStorage.removeItem(event.target.id);
+            displayCommentList();
+        }
+
+        function createElement(tag, id, text, parent) {
+            var child = document.createElement(tag);
+            child.id = id;
+            child.innerHTML = text;
+            parent.appendChild(child);
+        }
+
+        function createElementButton(id, text, functionName, parent) {
+            var child = document.createElement("button");
+            child.id = id;
+            child.innerHTML = text;
+            child.onclick = functionName;
+            parent.appendChild(child);
+        }
+
+        function createElementBr(parent) {
+            var child = document.createElement("br");
+            parent.appendChild(child);
+        }
+
+        function removeAllElementsOfId(id) {
+            while (id.hasChildNodes()) {
+                id.removeChild(id.lastChild);
+            }
+        }
+    </script>
+</body>
+
+</html>
